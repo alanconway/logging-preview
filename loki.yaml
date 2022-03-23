@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: loki
+  namespace: openshift-logging
+  labels:
+    app: loki
+spec:
+  containers:
+    - name: loki
+      image: grafana/loki:latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - name: loki
+          containerPort: 3100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+  namespace: openshift-logging
+spec:
+  selector:
+    app: loki
+  ports:
+    - name: loki
+      port: 3100
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: loki
+  namespace: openshift-logging
+spec:
+  port:
+    targetPort: 3100
+  to:
+    name: loki
+    kind: Service
